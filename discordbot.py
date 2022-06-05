@@ -9,12 +9,14 @@ voicevox_key = os.getenv("VOICEVOX_KEY")
 voicevox_speaker = os.getenv("VOICEVOX_SPEAKER", default="14")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
+
 async def voice_play(member, text):
     mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
     while member.guild.voice_client.is_playing():
         await asyncio.sleep(0.5)
     source = await discord.FFmpegOpusAudio.from_probe(mp3url)
     member.guild.voice_client.play(source)
+
 
 @client.event
 async def on_voice_state_update(member, before, after):
@@ -80,7 +82,7 @@ async def on_message(message: discord.Message):
         return
 
     if message.content == "!test":
-        message.channel.send("tesuto!")
+        await message.channel.send("tesuto!")
         text = "てすと"
         mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
         source = await discord.FFmpegOpusAudio.from_probe(mp3url)
