@@ -57,8 +57,7 @@ async def on_voice_state_update(member, before, after):
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
                 if (
-                    len(member.guild.voice_client.channel.members) == 1
-                    or member.voice.self_mute
+                    len(member.guild.voice_client.channel.members) == 1 or member.voice.self_mute
                 ):
                     await asyncio.sleep(0.5)
                     await member.guild.voice_client.disconnect()
