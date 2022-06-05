@@ -9,6 +9,15 @@ voicevox_key = os.getenv("VOICEVOX_KEY")
 voicevox_speaker = os.getenv("VOICEVOX_SPEAKER", default="14")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
+# @client.event
+# async def on_ready():
+
+@client.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+@client.command()
 
 @client.event
 async def on_voice_state_update(member, before, after):
@@ -68,8 +77,8 @@ async def on_command_error(ctx, error):
 
 
 @client.command()
-async def ping(ctx):
-    await ctx.send("pong")
+async def test(ctx):
+    await ctx.send("てすと")
 
 
 client.run(token)
