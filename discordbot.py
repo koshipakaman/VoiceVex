@@ -25,7 +25,7 @@ async def on_voice_state_update(member, before, after):
             presence = f"ヘルプ | {len(client.voice_clients)}/{len(client.guilds)}サーバー"
             await client.change_presence(activity=discord.Game(name=presence))
             text = "ヴェックスが入室しました"
-            mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=5"
+            mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=2&speedScale=0.8"
             source = await discord.FFmpegOpusAudio.from_probe(mp3url)
             member.guild.voice_client.play(source)
         else:
