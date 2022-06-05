@@ -72,7 +72,7 @@ async def test(ctx):
     text = "てすと"
     mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
     source = await discord.FFmpegOpusAudio.from_probe(mp3url)
-    discord.VoiceClient.play(source)
+    ctx.voice_client.play(source)
 
 
 client.run(token)
