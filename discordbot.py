@@ -77,7 +77,7 @@ async def on_command_error(ctx, error):
 
 @client.listen()
 async def on_message(message):
-    message.channel.send(message.content)
+    await message.channel.send(message.content)
     if client.user in message.mentions:
         for member in client.get_all_members():
             if member.bot:
