@@ -17,6 +17,12 @@ def load_words():
     return [line.strip() for line in lines]
 
 
+def bot_voice_client():
+    for vc in client.voice_clients:
+        if vc.user.id == client.user.id:
+            return vc
+
+
 words = load_words()
 
 
@@ -69,11 +75,14 @@ async def on_command_error(ctx, error):
     await ctx.send(error_msg)
 
 
-@client.event
+@client.listen
 async def on_message(message):
     if client.user in message.mentions:
+        await message.channel.send("catch")
         for member in client.get_all_members():
+            print(member)
             if member.user.id == client.user.id:
+                print("bot")
                 await member_voice_play(member, message.content)
                 return
 
