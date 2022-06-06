@@ -17,10 +17,10 @@ def load_words():
     return [line.strip() for line in lines]
 
 
-def bot_voice_client():
-    for vc in client.voice_clients:
-        if vc.user.id == client.user.id:
-            return vc
+def remove_mention(content):
+    strs = content.split(" ")
+    mention_removed = strs[1:]
+    return mention_removed.join()
 
 
 words = load_words()
@@ -84,6 +84,7 @@ async def on_message(message: discord.Message):
     if client.user in message.mentions:
         for member in client.get_all_members():
             if member.bot:
+                remove_mention(message.clean_content)
                 await member_voice_play(member, message.clean_content)
                 return
 
