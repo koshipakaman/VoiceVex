@@ -78,11 +78,8 @@ async def on_command_error(ctx, error):
 @client.listen()
 async def on_message(message):
     if client.user in message.mentions:
-        await message.channel.send("catch")
         for member in client.get_all_members():
-            print(member)
-            if member.user.id == client.user.id:
-                print("bot")
+            if member.bot:
                 await member_voice_play(member, message.content)
                 return
 
@@ -94,6 +91,7 @@ async def inmu(ctx):
         if member.bot:
             text = random.choice(words)
             await member_voice_play(member, text)
+            return
 
 
 client.run(token)
