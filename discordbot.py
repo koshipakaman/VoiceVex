@@ -11,6 +11,11 @@ voicevox_speaker = os.getenv("VOICEVOX_SPEAKER", default="14")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
 
+def bot_member():
+    members = client.get_all_members()
+    for member in members:
+        return member
+
 def load_words():
     with open("./goroku.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -67,6 +72,16 @@ async def on_command_error(ctx, error):
         traceback.TracebackException.from_exception(orig_error).format()
     )
     await ctx.send(error_msg)
+
+
+async def reply(message):
+    await voice_play(bot_member(), message.content)
+
+
+@client.listen
+async def on_message(message):
+    if client.user in message.mentions:
+        await reply(message)
 
 
 @client.command()
