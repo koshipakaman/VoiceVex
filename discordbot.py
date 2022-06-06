@@ -84,8 +84,8 @@ async def on_message(message: discord.Message):
     if client.user in message.mentions:
         for member in client.get_all_members():
             if member.bot:
-                remove_mention(message.clean_content)
-                await member_voice_play(member, message.clean_content)
+                content = remove_mention(message.clean_content)
+                await member_voice_play(member, content)
                 return
 
 
