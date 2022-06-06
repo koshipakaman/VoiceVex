@@ -75,7 +75,7 @@ async def on_command_error(ctx, error):
     await ctx.send(error_msg)
 
 
-@client.listen
+@client.listen()
 async def on_message(message):
     if client.user in message.mentions:
         await message.channel.send("catch")
