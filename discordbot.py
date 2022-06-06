@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 import os
 import traceback
+import random
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
@@ -10,8 +11,17 @@ voicevox_speaker = os.getenv("VOICEVOX_SPEAKER", default="14")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
 
-async def voice_play(member, text):
-    mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
+def load_words():
+    with open("./goroku.txt", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    return [line.strip() for line in lines]
+
+
+words = load_words()
+
+
+async def voice_play(member, text, intonation=1, speed=0.9):
+    mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale={intonation}&speed={speed}"
     while member.guild.voice_client.is_playing():
         await asyncio.sleep(0.5)
     source = await discord.FFmpegOpusAudio.from_probe(mp3url)
@@ -22,27 +32,19 @@ async def voice_play(member, text):
 async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
-            presence = f"ヘルプ | {len(client.voice_clients)}/{len(client.guilds)}サーバー"
+            presence = "Active"
             await client.change_presence(activity=discord.Game(name=presence))
-            text = "ヴェックスが入室しました"
-            mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=2&speedScale=0.8"
-            source = await discord.FFmpegOpusAudio.from_probe(mp3url)
-            member.guild.voice_client.play(source)
+            voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
                 await asyncio.sleep(0.5)
                 await after.channel.connect()
             else:
                 if member.guild.voice_client.channel is after.channel:
-                    text = member.name + "さんが入室しました"
-                    mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
-                    while member.guild.voice_client.is_playing():
-                        await asyncio.sleep(0.5)
-                    source = await discord.FFmpegOpusAudio.from_probe(mp3url)
-                    member.guild.voice_client.play(source)
+                    voice_play(member, text=f"{member.name}さんが入室しました")
     elif after.channel is None:
         if member.id == client.user.id:
-            presence = f"ヘルプ | {len(client.voice_clients)}/{len(client.guilds)}サーバー"
+            presence = "Active"
             await client.change_presence(activity=discord.Game(name=presence))
         else:
             if member.guild.voice_client:
@@ -51,12 +53,7 @@ async def on_voice_state_update(member, before, after):
                         await asyncio.sleep(0.5)
                         await member.guild.voice_client.disconnect()
                     else:
-                        text = member.name + "さんが退室しました"
-                        mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
-                        while member.guild.voice_client.is_playing():
-                            await asyncio.sleep(0.5)
-                        source = await discord.FFmpegOpusAudio.from_probe(mp3url)
-                        member.guild.voice_client.play(source)
+                        voice_play(member, text=f"{member.name}さんが退室しました")
     elif before.channel != after.channel:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
@@ -78,18 +75,13 @@ async def on_command_error(ctx, error):
     await ctx.send(error_msg)
 
 
-@client.event
-async def on_message(message: discord.Message):
-
-    if message.auther.bot:
-        return
-
-    if message.content == "!test":
-        await message.channel.send("tesuto!")
-        text = "てすと"
-        mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale=1"
-        source = await discord.FFmpegOpusAudio.from_probe(mp3url)
-        message.guild.voice_client.play(source)
+@client.command()
+async def inmu(ctx):
+    members = client.get_all_members()
+    for member in members:
+        if member.bot:
+            text = random.choice(words)
+            voice_play(member, text)
 
 
 client.run(token)
