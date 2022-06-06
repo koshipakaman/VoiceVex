@@ -33,19 +33,19 @@ async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
             presence = "Active"
-            await client.change_presence(activity=discord.Game(name=presence))
-            voice_play(member, text="ヴェックスが入室しました")
+            await client.change_presence(activity=presence)
+            await voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
                 await asyncio.sleep(0.5)
                 await after.channel.connect()
             else:
                 if member.guild.voice_client.channel is after.channel:
-                    voice_play(member, text=f"{member.name}さんが入室しました")
+                    await voice_play(member, text=f"{member.name}さんが入室しました")
     elif after.channel is None:
         if member.id == client.user.id:
             presence = "Active"
-            await client.change_presence(activity=discord.Game(name=presence))
+            await client.change_presence(activity=presence)
         else:
             if member.guild.voice_client:
                 if member.guild.voice_client.channel is before.channel:
@@ -81,7 +81,7 @@ async def inmu(ctx):
     for member in members:
         if member.bot:
             text = random.choice(words)
-            voice_play(member, text)
+            await voice_play(member, text)
 
 
 client.run(token)
