@@ -32,8 +32,6 @@ async def voice_play(member, text, intonation=1, speed=0.9):
 async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
-            presence = "Active"
-            await client.change_presence(activity=presence)
             await voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
@@ -41,19 +39,15 @@ async def on_voice_state_update(member, before, after):
                 await after.channel.connect()
             else:
                 if member.guild.voice_client.channel is after.channel:
-                    await voice_play(member, text=f"{member.name}さんが入室しました")
+                    await voice_play(member, text=f"{member.name}が入室しました")
     elif after.channel is None:
-        if member.id == client.user.id:
-            presence = "Active"
-            await client.change_presence(activity=presence)
-        else:
-            if member.guild.voice_client:
-                if member.guild.voice_client.channel is before.channel:
-                    if len(member.guild.voice_client.channel.members) == 1:
-                        await asyncio.sleep(0.5)
-                        await member.guild.voice_client.disconnect()
-                    else:
-                        voice_play(member, text=f"{member.name}さんが退室しました")
+        if member.guild.voice_client:
+            if member.guild.voice_client.channel is before.channel:
+                if len(member.guild.voice_client.channel.members) == 1:
+                    await asyncio.sleep(0.5)
+                    await member.guild.voice_client.disconnect()
+                else:
+                    voice_play(member, text=f"{member.name}が退室しました")
     elif before.channel != after.channel:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
