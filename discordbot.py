@@ -14,7 +14,9 @@ token = os.getenv("DISCORD_BOT_TOKEN")
 def bot_member():
     members = client.get_all_members()
     for member in members:
-        return member
+        if member.bot:
+            return member
+
 
 def load_words():
     with open("./goroku.txt", "r", encoding="utf-8") as f:
@@ -25,7 +27,7 @@ def load_words():
 words = load_words()
 
 
-async def voice_play(member, text, intonation=1, speed=0.9):
+async def member_voice_play(member, text, intonation=1, speed=0.9):
     mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale={intonation}&speed={speed}"
     while member.guild.voice_client.is_playing():
         await asyncio.sleep(0.5)
@@ -37,14 +39,14 @@ async def voice_play(member, text, intonation=1, speed=0.9):
 async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
-            await voice_play(member, text="ヴェックスが入室しました")
+            await member_voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
                 await asyncio.sleep(0.5)
                 await after.channel.connect()
             else:
                 if member.guild.voice_client.channel is after.channel:
-                    await voice_play(member, text=f"{member.name}が入室しました")
+                    await member_voice_play(member, text=f"{member.name}が入室しました")
     elif after.channel is None:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
@@ -52,7 +54,7 @@ async def on_voice_state_update(member, before, after):
                     await asyncio.sleep(0.5)
                     await member.guild.voice_client.disconnect()
                 else:
-                    voice_play(member, text=f"{member.name}が退室しました")
+                    member_voice_play(member, text=f"{member.name}が退室しました")
     elif before.channel != after.channel:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
@@ -75,7 +77,7 @@ async def on_command_error(ctx, error):
 
 
 async def reply(message):
-    await voice_play(bot_member(), message.content)
+    await member_voice_play(bot_member(), message.content)
 
 
 @client.listen
@@ -90,7 +92,7 @@ async def inmu(ctx):
     for member in members:
         if member.bot:
             text = random.choice(words)
-            await voice_play(member, text)
+            await member_voice_play(member, text)
 
 
 client.run(token)
