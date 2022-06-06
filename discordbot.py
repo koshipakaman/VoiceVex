@@ -20,7 +20,7 @@ def load_words():
 def remove_mention(content):
     strs = content.split(" ")
     mention_removed = strs[1:]
-    return mention_removed.join()
+    return " ".join(mention_removed)
 
 
 words = load_words()
