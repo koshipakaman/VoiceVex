@@ -76,7 +76,7 @@ async def on_command_error(ctx, error):
 
 
 @client.listen()
-async def on_message(message):
+async def on_message(message: discord.Message):
 
     if message.author.bot:
         return
@@ -84,7 +84,7 @@ async def on_message(message):
     if client.user in message.mentions:
         for member in client.get_all_members():
             if member.bot:
-                await member_voice_play(member, message.content)
+                await member_voice_play(member, message.clean_content)
                 return
 
 
