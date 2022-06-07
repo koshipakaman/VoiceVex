@@ -6,6 +6,7 @@ import os
 import traceback
 import random
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
@@ -101,8 +102,8 @@ async def inmu(ctx):
 
 
 @tasks.loop(minutes=1.0)
-async def loop():
-    now = datetime.now().strftime('%H:%M')
+async def times_loop():
+    now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
     members = client.get_all_members()
     if now.endswith(':00'):
         hour = now[:2]
@@ -111,7 +112,18 @@ async def loop():
                 await member_voice_play(member, text=hour + "時です", speaker=19, intonation=1, speed=0.9)
                 return
 
+@client.command()
+async def times(ctx):
+    now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
+    members = client.get_all_members()
+    for member in members:
+        if member.bot:
+            hour = now[:2]
+            minutes_ = now[-2:]
+            await member_voice_play(member, text=hour + "時" + minutes_ + "分です", speaker=19, intonation=1, speed=0.9)
+            return
 
-loop.start()
+
+times_loop.start()
 
 client.run(token)
