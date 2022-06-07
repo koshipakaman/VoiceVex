@@ -7,7 +7,6 @@ import random
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
-voicevox_speaker = os.getenv("VOICEVOX_SPEAKER", default="14")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
 
@@ -26,8 +25,8 @@ def remove_mention(content):
 words = load_words()
 
 
-async def member_voice_play(member, text, intonation=1, speed=0.9):
-    mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={voicevox_speaker}&intonationScale={intonation}&speed={speed}"
+async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
+    mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={speaker}&intonationScale={intonation}&speed={speed}"
     while member.guild.voice_client.is_playing():
         await asyncio.sleep(0.5)
     source = await discord.FFmpegOpusAudio.from_probe(mp3url)
