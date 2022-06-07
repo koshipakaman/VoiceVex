@@ -1,9 +1,11 @@
 import asyncio
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import os
 import traceback
 import random
+from datetime import datetime
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
@@ -97,5 +99,19 @@ async def inmu(ctx):
             await member_voice_play(member, text)
             return
 
+
+@tasks.loop(minutes=1.0)
+async def loop():
+    now = datetime.now().strftime('%H:%M')
+    members = client.get_all_members()
+    if now.endswith(':00'):
+        hour = now[:2]
+        for member in members:
+            if member.bot:
+                await member_voice_play(member, text=hour + "時です", speaker=19, intonation=1, speed=0.9)
+                return
+
+
+loop.start()
 
 client.run(token)
