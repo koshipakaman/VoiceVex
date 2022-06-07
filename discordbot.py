@@ -100,7 +100,7 @@ async def inmu(ctx):
             return
 
 
-@tasks.loop(minutes=1)
+@tasks.loop(minutes=1.0)
 async def loop():
     now = datetime.now().strftime('%H:%M')
     members = client.get_all_members()
