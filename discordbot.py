@@ -100,14 +100,16 @@ async def inmu(ctx):
             return
 
 
-@tasks.loop(seconds=60)
+@tasks.loop(minutes=1)
 async def loop():
     now = datetime.now().strftime('%H:%M')
     members = client.get_all_members()
     if now.endswith(':00'):
         hour = now[:2]
         for member in members:
-            await member_voice_play(member, text=hour + "時です", speaker=19, intonation=1, speed=0.9)
+            if member.bot:
+                await member_voice_play(member, text=hour + "時です", speaker=19, intonation=1, speed=0.9)
+                return
 
 
 loop.start()
