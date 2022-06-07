@@ -102,7 +102,6 @@ async def inmu(ctx):
 
 @tasks.loop(seconds=60)
 async def loop():
-    # 現在の時刻
     now = datetime.now().strftime('%H:%M')
     members = client.get_all_members()
     if now.endswith(':00'):
@@ -111,7 +110,6 @@ async def loop():
             await member_voice_play(member, text=hour+"時です", speaker=19, intonation=1, speed=0.9)
 
 
-#ループ処理実行
 loop.start()
 
 client.run(token)
