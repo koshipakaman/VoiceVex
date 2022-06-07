@@ -5,7 +5,7 @@ from discord.ext import tasks
 import os
 import traceback
 import random
-from datetime import datetime 
+from datetime import datetime
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
