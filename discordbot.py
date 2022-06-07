@@ -107,7 +107,7 @@ async def loop():
     if now.endswith(':00'):
         hour = now[:2]
         for member in members:
-            await member_voice_play(member, text=hour+"時です", speaker=19, intonation=1, speed=0.9)
+            await member_voice_play(member, text = hour + "時です", speaker=19, intonation=1, speed=0.9)
 
 
 loop.start()
