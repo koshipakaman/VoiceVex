@@ -20,7 +20,7 @@ def set_bot_member(member):
     bot_member = member
 
 
-def get_bot_membner(member):
+def get_bot_member():
     global bot_member
     return bot_member
 
@@ -98,14 +98,14 @@ async def on_message(message: discord.Message):
 
     if client.user in message.mentions:
         content = remove_mention(message.clean_content)
-        await member_voice_play(get_bot_membner(), content)
+        await member_voice_play(get_bot_member(), content)
         return
 
 
 @client.command()
 async def inmu(ctx):
     text = random.choice(words)
-    await member_voice_play(get_bot_membner(), text)
+    await member_voice_play(get_bot_member(), text)
     return
 
 
@@ -114,7 +114,7 @@ async def times_loop():
     now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
     if now.endswith(':00'):
         hour = now[:2]
-        await member_voice_play(get_bot_membner(), text=hour + "時です", speaker=19, intonation=1, speed=0.9)
+        await member_voice_play(get_bot_member(), text=hour + "時です", speaker=19, intonation=1, speed=0.9)
         return
 
 
@@ -125,8 +125,8 @@ async def times(ctx):
     for member in members:
         if member.bot:
             hour = now[:2]
-            minutes_ = now[-2:]
-            await member_voice_play(member, text=hour + "時" + minutes_ + "分です", speaker=19, intonation=1, speed=0.9)
+            minutes = now[-2:]
+            await member_voice_play(member, text=hour + "時" + minutes + "分です", speaker=19, intonation=1, speed=0.9)
             return
 
 
