@@ -12,6 +12,18 @@ client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
+bot_member = None
+
+
+def set_bot_member(member):
+    global bot_member
+    bot_member = member
+
+
+def get_bot_membner(member):
+    global bot_member
+    return bot_member
+
 
 def load_words():
     with open("./goroku.txt", "r", encoding="utf-8") as f:
@@ -40,6 +52,7 @@ async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
 async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
+            set_bot_member(member)
             await member_voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
@@ -84,33 +97,26 @@ async def on_message(message: discord.Message):
         return
 
     if client.user in message.mentions:
-        for member in client.get_all_members():
-            if member.bot:
-                content = remove_mention(message.clean_content)
-                await member_voice_play(member, content)
-                return
+        content = remove_mention(message.clean_content)
+        await member_voice_play(get_bot_membner(), content)
+        return
 
 
 @client.command()
 async def inmu(ctx):
-    members = client.get_all_members()
-    for member in members:
-        if member.bot:
-            text = random.choice(words)
-            await member_voice_play(member, text)
-            return
+    text = random.choice(words)
+    await member_voice_play(get_bot_membner(), text)
+    return
 
 
 @tasks.loop(minutes=1.0)
 async def times_loop():
     now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
-    members = client.get_all_members()
     if now.endswith(':00'):
         hour = now[:2]
-        for member in members:
-            if member.bot:
-                await member_voice_play(member, text=hour + "時です", speaker=19, intonation=1, speed=0.9)
-                return
+        await member_voice_play(get_bot_membner(), text=hour + "時です", speaker=19, intonation=1, speed=0.9)
+        return
+
 
 @client.command()
 async def times(ctx):
