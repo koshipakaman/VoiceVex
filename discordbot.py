@@ -7,22 +7,26 @@ import traceback
 import random
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import emoji
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
-bot_member = None
+
+def find(arr, cond):
+    return next((el for el in arr if cond(el)), None)
 
 
-def set_bot_member(member):
-    global bot_member
-    bot_member = member
+class BotInfo:
 
+    def text_channel(name):
+        guild = find(
+            client.guilds, (lambda guild: guild.name == BotInfo.GUILD_NAME))
+        return find(guild.text_channels, (lambda channel: channel.name == name))
 
-def get_bot_member():
-    global bot_member
-    return bot_member
+    GUILD_NAME = "inokuchi-gaming"
+    member = None
 
 
 def load_words():
@@ -41,6 +45,10 @@ words = load_words()
 
 
 async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
+
+    if member.voice_client is None:
+        return
+
     mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={speaker}&intonationScale={intonation}&speed={speed}"
     while member.guild.voice_client.is_playing():
         await asyncio.sleep(0.5)
@@ -52,15 +60,16 @@ async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
 async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
-            set_bot_member(member)
+            BotInfo.member = member
             await member_voice_play(member, text="ヴェックスが入室しました")
+            await client.change_presence(activity=discord.Activity(name=emoji.emojize(f":red_circle: {after.channel.name}で通話中"), status=discord.Status.do_not_disturb))
         else:
             if member.guild.voice_client is None:
                 await asyncio.sleep(0.5)
                 await after.channel.connect()
             else:
                 if member.guild.voice_client.channel is after.channel:
-                    await member_voice_play(member, text=f"{member.name}が入室しました")
+                    await member_voice_play(member, f"{member.name}が入室しました")
     elif after.channel is None:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
@@ -68,7 +77,8 @@ async def on_voice_state_update(member, before, after):
                     await asyncio.sleep(0.5)
                     await member.guild.voice_client.disconnect()
                 else:
-                    member_voice_play(member, text=f"{member.name}が退室しました")
+                    member_voice_play(member, f"{member.name}が退室しました")
+                    await client.change_presence(activity=discord.Activity(status=discord.Status.online))
     elif before.channel != after.channel:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
@@ -98,14 +108,14 @@ async def on_message(message: discord.Message):
 
     if client.user in message.mentions:
         content = remove_mention(message.clean_content)
-        await member_voice_play(get_bot_member(), content)
+        await member_voice_play(BotInfo.member, content)
         return
 
 
 @client.command()
 async def inmu(ctx):
     text = random.choice(words)
-    await member_voice_play(get_bot_member(), text)
+    await member_voice_play(BotInfo.member, text)
     return
 
 
@@ -114,20 +124,17 @@ async def times_loop():
     now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
     if now.endswith(':00'):
         hour = now[:2]
-        await member_voice_play(get_bot_member(), text=hour + "時です", speaker=19, intonation=1, speed=0.9)
+        await member_voice_play(BotInfo.member, f"{hour}時です", speaker=19, intonation=1, speed=0.9)
         return
 
 
 @client.command()
 async def times(ctx):
     now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
-    members = client.get_all_members()
-    for member in members:
-        if member.bot:
-            hour = now[:2]
-            minutes = now[-2:]
-            await member_voice_play(member, text=hour + "時" + minutes + "分です", speaker=19, intonation=1, speed=0.9)
-            return
+    hour = now[:2]
+    minutes = now[-2:]
+    await member_voice_play(BotInfo.member, f"{hour}時{minutes}分です", speaker=19, intonation=1, speed=0.9)
+    return
 
 
 times_loop.start()
