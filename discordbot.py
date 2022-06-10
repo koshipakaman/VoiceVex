@@ -46,7 +46,7 @@ words = load_words()
 
 async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
 
-    if member.voice_client is None:
+    if member.guild.voice_client is None:
         return
 
     mp3url = f"https://api.su-shiki.com/v2/voicevox/audio/?text={text}&key={voicevox_key}&speaker={speaker}&intonationScale={intonation}&speed={speed}"
