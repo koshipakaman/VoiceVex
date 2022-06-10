@@ -60,7 +60,7 @@ async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
             BotInfo.member = member
-            await client.change_presence(activity=discord.Activity(name=f"{after.channel.name}で通話中", type=discord.ActivityType.listening))
+            await client.change_presence(activity=discord.Activity(name=f"{after.channel.name}", type=discord.ActivityType.unknown))
             await member_voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
@@ -75,9 +75,9 @@ async def on_voice_state_update(member, before, after):
                 if len(member.guild.voice_client.channel.members) == 1:
                     await asyncio.sleep(0.5)
                     await member.guild.voice_client.disconnect()
+                    await client.change_presence(activity=discord.Game("League of Legends"))
                 else:
                     member_voice_play(member, f"{member.name}が退室しました")
-                    await client.change_presence(activity=discord.Game("League of Legends"))
     elif before.channel != after.channel:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
