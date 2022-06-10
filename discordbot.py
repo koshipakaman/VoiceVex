@@ -1,7 +1,6 @@
 import asyncio
 import discord
-from discord.ext import commands
-from discord.ext import tasks
+from discord.ext import tasks, commands
 import os
 import traceback
 import random
@@ -47,6 +46,10 @@ async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
     source = await discord.FFmpegOpusAudio.from_probe(mp3url)
     member.guild.voice_client.play(source)
 
+@client.event
+async def on_ready():
+    print("ready")
+    times_loop.start()
 
 @client.event
 async def on_voice_state_update(member, before, after):
