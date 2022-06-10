@@ -7,7 +7,6 @@ import traceback
 import random
 from datetime import datetime
 from zoneinfo import ZoneInfo
-import emoji
 
 client = commands.Bot(command_prefix="/")
 voicevox_key = os.getenv("VOICEVOX_KEY")
@@ -61,8 +60,8 @@ async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
             BotInfo.member = member
+            await client.change_presence(activity=discord.Activity(name=f"{after.channel.name}で通話中", type=discord.ActivityType.listening))
             await member_voice_play(member, text="ヴェックスが入室しました")
-            await client.change_presence(activity=discord.Activity(name=emoji.emojize(f":red_circle: {after.channel.name}で通話中"), status=discord.Status.do_not_disturb))
         else:
             if member.guild.voice_client is None:
                 await asyncio.sleep(0.5)
@@ -78,7 +77,7 @@ async def on_voice_state_update(member, before, after):
                     await member.guild.voice_client.disconnect()
                 else:
                     member_voice_play(member, f"{member.name}が退室しました")
-                    await client.change_presence(activity=discord.Activity(status=discord.Status.online))
+                    await client.change_presence(activity=discord.Game("League of Legends"))
     elif before.channel != after.channel:
         if member.guild.voice_client:
             if member.guild.voice_client.channel is before.channel:
@@ -91,7 +90,7 @@ async def on_voice_state_update(member, before, after):
                     await after.channel.connect()
 
 
-@client.event
+@ client.event
 async def on_command_error(ctx, error):
     orig_error = getattr(error, "original", error)
     error_msg = "".join(
@@ -100,7 +99,7 @@ async def on_command_error(ctx, error):
     await ctx.send(error_msg)
 
 
-@client.listen()
+@ client.listen()
 async def on_message(message: discord.Message):
 
     if message.author.bot:
@@ -112,14 +111,14 @@ async def on_message(message: discord.Message):
         return
 
 
-@client.command()
+@ client.command()
 async def inmu(ctx):
     text = random.choice(words)
     await member_voice_play(BotInfo.member, text)
     return
 
 
-@tasks.loop(minutes=1.0)
+@ tasks.loop(minutes=1.0)
 async def times_loop():
     now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
     if now.endswith(':00'):
@@ -128,7 +127,7 @@ async def times_loop():
         return
 
 
-@client.command()
+@ client.command()
 async def times(ctx):
     now = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%H:%M')
     hour = now[:2]
