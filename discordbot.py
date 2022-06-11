@@ -45,10 +45,10 @@ def date_to_str(date):
 def index_emoji(index):
 
     if isinstance(index, int):
-        return f"<:{DISCORD_EMOJI_NAME[index]}:{BotInfo.EMOJI_ID}>"
+        return f":{DISCORD_EMOJI_NAME[index]}:"
 
     else:
-        return f"<:regional_indicator_{index}:{BotInfo.EMOJI_ID}>"
+        return f":regional_indicator_{index}:"
 
 
 def load_words():
@@ -85,7 +85,6 @@ class BotInfo:
         return find(guild.text_channels, (lambda channel: channel.name == name))
 
     GUILD_ID = "580377387968102431"
-    EMOJI_ID = "985010014429249577"
     member = None
 
 
@@ -216,6 +215,12 @@ async def schedule(ctx, begin, end, description="日程調整"):
     for index in indexes:
         await last_message.add_reaction(index_emoji(index))
 
+
+@client.command()
+async def indexEmoji(ctx):
+
+    await ctx.channel.send(index_emoji(1))
+    await ctx.channel.send(index_emoji("a"))
 
 times_loop.start()
 
