@@ -191,7 +191,7 @@ async def schedule(ctx, begin, end, description="日程調整"):
     end_date = str_to_date(end)
 
     if begin_date > end_date:
-        ctx.channel.send("schedule(): begin date > end date")
+        await ctx.channel.send("schedule(): begin date > end date")
         return
 
     dates = list(date_range(begin_date, end_date))
@@ -213,7 +213,7 @@ async def schedule(ctx, begin, end, description="日程調整"):
     last_message = ctx.channelctx.chennel.last_message
 
     for index in indexes:
-        last_message.add_reaction(index_emoji(index))
+        await last_message.add_reaction(index_emoji(index))
 
 
 times_loop.start()
