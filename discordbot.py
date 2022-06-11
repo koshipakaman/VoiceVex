@@ -222,7 +222,7 @@ async def schedule(ctx, begin, end, description="日程調整"):
     )
     for index, _date in zip(indexes, dates):
         # ゼロ幅スペースを入れないとHTTPExceptionになる
-        embed.add_field(name=f"{index}. {_date}", value='\u200b', inline=False)
+        embed.add_field(name=f"{index}. {_date}", value='\u200b', inline=True)
 
     embed.set_footer(text=f"created {datetime.now().date()}")
 
