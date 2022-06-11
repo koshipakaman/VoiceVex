@@ -2,10 +2,12 @@ import asyncio
 import discord
 from discord.ext import commands
 from discord.ext import tasks
+from discord import Colour
 import os
 import traceback
 import random
-from datetime import datetime
+import string
+from datetime import datetime, timedelta, date
 from zoneinfo import ZoneInfo
 
 client = commands.Bot(command_prefix="/")
@@ -17,15 +19,36 @@ def find(arr, cond):
     return next((el for el in arr if cond(el)), None)
 
 
-class BotInfo:
+def index_list(length):
 
-    def text_channel(name):
-        guild = find(
-            client.guilds, (lambda guild: guild.name == BotInfo.GUILD_NAME))
-        return find(guild.text_channels, (lambda channel: channel.name == name))
+    if length < 11:
+        return list(range(1, length + 1))
 
-    GUILD_NAME = "inokuchi-gaming"
-    member = None
+    return string.ascii_lowercase[:length]
+
+
+def date_range(start, end):
+    for n in range((end - start).days):
+        yield start + timedelta(n)
+
+
+def str_to_date(str):
+    year = datetime.now(ZoneInfo("Asia/Tokyo")).year
+    month, day = tuple(str.split("/"))
+    return date(year, int(month), int(day))
+
+
+def date_to_str(date):
+    return f"{date.month}/{date.day}"
+
+
+def index_emoji(index):
+
+    if isinstance(index, int):
+        return DISCORD_EMOJI_NAME[index]
+
+    else:
+        return f":regional_indicator_{index}:"
 
 
 def load_words():
@@ -38,6 +61,31 @@ def remove_mention(content):
     strs = content.split(" ")
     mention_removed = strs[1:]
     return " ".join(mention_removed)
+
+
+DISCORD_EMOJI_NAME = {
+    1: ":one:",
+    2: ":two:",
+    3: ":three:",
+    4: ":four:",
+    5: ":five:",
+    6: ":six:",
+    7: ":seven:",
+    8: ":eight:",
+    9: ":nine:",
+    10: ":keycap_ten:",
+}
+
+
+class BotInfo:
+
+    def text_channel(name):
+        guild = find(
+            client.guilds, (lambda guild: guild.id == BotInfo.GUILD_ID))
+        return find(guild.text_channels, (lambda channel: channel.name == name))
+
+    GUILD_ID = "580377387968102431"
+    member = None
 
 
 words = load_words()
@@ -60,7 +108,7 @@ async def on_voice_state_update(member, before, after):
     if before.channel is None:
         if member.id == client.user.id:
             BotInfo.member = member
-            await client.change_presence(activity=discord.Activity(name=f"{after.channel.name}", type=discord.ActivityType.unknown))
+            await client.change_presence(activity=discord.Activity(name=f"{after.channel.name}", type=discord.ActivityType.playing))
             await member_voice_play(member, text="ヴェックスが入室しました")
         else:
             if member.guild.voice_client is None:
@@ -134,6 +182,37 @@ async def times(ctx):
     minutes = now[-2:]
     await member_voice_play(BotInfo.member, f"{hour}時{minutes}分です", speaker=19, intonation=1, speed=0.9)
     return
+
+
+@client.command()
+async def schedule(ctx, begin, end, description="日程調整"):
+
+    begin_date = str_to_date(begin)
+    end_date = str_to_date(end)
+
+    if begin_date > end_date:
+        ctx.channel.send("schedule(): begin date > end date")
+        return
+
+    dates = list(date_range(begin_date, end_date))
+    dates = [date_to_str(date) for date in dates]
+    indexes = index_list(len(dates))
+
+    embed = discord.Embed(
+        title="Scheduler",
+        description=description,
+        color=Colour.blue()
+    )
+    for index, _date in zip(indexes, dates):
+        embed.add_field(name=f"{index}. {_date}", value="", inline=False)
+
+    embed.set_footer(text=f"created {datetime.now().date()}")
+
+    await ctx.send(embed=embed)
+    last_message = ctx.channelctx.chennel.last_message
+
+    for index in indexes:
+        last_message.add_reaction(index_emoji(index))
 
 
 times_loop.start()
