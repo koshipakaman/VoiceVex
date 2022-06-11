@@ -221,7 +221,7 @@ async def indexEmoji(ctx):
 
     await ctx.channel.send(index_emoji(1))
     await ctx.channel.send(index_emoji("a"))
-    await ctx.channel.last_mesasge.add_reaction(index_emoji(1))
+    await ctx.channel.last_message.add_reaction(index_emoji(1))
 
 times_loop.start()
 
