@@ -210,7 +210,7 @@ async def schedule(ctx, begin, end, description="日程調整"):
     embed.set_footer(text=f"created {datetime.now().date()}")
 
     await ctx.send(embed=embed)
-    last_message = ctx.channelctx.chennel.last_message
+    last_message = ctx.channel.last_message
 
     for index in indexes:
         await last_message.add_reaction(index_emoji(index))
