@@ -217,10 +217,6 @@ async def schedule(ctx, begin, end, description="日程調整"):
         await last_message.add_reaction(index_emoji(index))
 
 
-# times_loop.start()
+times_loop.start()
 
-# client.run(token)
-
-begin = "6/11"
-end = "6/18"
-print(list(date_range(str_to_date(begin), str_to_date(end))))
+client.run(token)
