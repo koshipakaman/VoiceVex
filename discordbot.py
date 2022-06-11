@@ -204,7 +204,8 @@ async def schedule(ctx, begin, end, description="日程調整"):
         color=Colour.blue()
     )
     for index, _date in zip(indexes, dates):
-        embed.add_field(name=f"{index}. {_date}", value="", inline=False)
+        # ゼロ幅スペースを入れないとHTTPExceptionになる
+        embed.add_field(name=f"{index}. {_date}", value='\u200', inline=False)
 
     embed.set_footer(text=f"created {datetime.now().date()}")
 
