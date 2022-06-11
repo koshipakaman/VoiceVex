@@ -28,7 +28,7 @@ def index_list(length):
 
 
 def date_range(start, end):
-    for n in range((end - start).days):
+    for n in range((end - start).days + 1):
         yield start + timedelta(n)
 
 
@@ -45,10 +45,10 @@ def date_to_str(date):
 def index_emoji(index):
 
     if isinstance(index, int):
-        return DISCORD_EMOJI_NAME[index]
+        return f"<:{DISCORD_EMOJI_NAME[index]}:{BotInfo.EMOJI_ID}>"
 
     else:
-        return f":regional_indicator_{index}:"
+        return f"<:regional_indicator_{index}:{BotInfo.EMOJI_ID}>"
 
 
 def load_words():
@@ -64,16 +64,16 @@ def remove_mention(content):
 
 
 DISCORD_EMOJI_NAME = {
-    1: ":one:",
-    2: ":two:",
-    3: ":three:",
-    4: ":four:",
-    5: ":five:",
-    6: ":six:",
-    7: ":seven:",
-    8: ":eight:",
-    9: ":nine:",
-    10: ":keycap_ten:",
+    1: "one",
+    2: "two",
+    3: "three",
+    4: "four",
+    5: "five",
+    6: "six",
+    7: "seven",
+    8: "eight",
+    9: "nine",
+    10: "keycap_ten",
 }
 
 
@@ -85,6 +85,7 @@ class BotInfo:
         return find(guild.text_channels, (lambda channel: channel.name == name))
 
     GUILD_ID = "580377387968102431"
+    EMOJI_ID = "985010014429249577"
     member = None
 
 
