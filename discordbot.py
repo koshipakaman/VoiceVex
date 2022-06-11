@@ -55,16 +55,16 @@ def remove_mention(content):
 
 
 UNICODE_EMOJI = {
-    1: "\N{DIGIT ONE}",
-    2: "\N{DIGIT TWO}",
-    3: "\N{DIGIT THREE}",
-    4: "\N{DIGIT FOUR}",
-    5: "\N{DIGIT FIVE}",
-    6: "\N{DIGIT SIX}",
-    7: "\N{DIGIT SEVEN}",
-    8: "\N{DIGIT EIGHT}",
-    9: "\N{DIGIT NINE}",
-    10: "\N{KEYCAP TEN}",
+    1: u"1️⃣",
+    2: u"2️⃣",
+    3: u"3️⃣",
+    4: u"4️⃣",
+    5: u"5️⃣",
+    6: u"6️⃣",
+    7: u"7️⃣",
+    8: u"8️⃣",
+    9: u"9️⃣",
+    10: u"🔟",
     "a": "\N{REGIONAL INDICATOR SYMBOL LETTER A}",
     "b": "\N{REGIONAL INDICATOR SYMBOL LETTER B}",
     "c": "\N{REGIONAL INDICATOR SYMBOL LETTER C}",
@@ -222,7 +222,7 @@ async def schedule(ctx, begin, end, description="日程調整"):
     )
     for index, _date in zip(indexes, dates):
         # ゼロ幅スペースを入れないとHTTPExceptionになる
-        embed.add_field(name=f"{index}. {_date}", value='\u200b', inline=False)
+        embed.add_field(name=f"{index}. {_date}", value='\u200b', inline=True)
 
     embed.set_footer(text=f"created {datetime.now().date()}")
 
