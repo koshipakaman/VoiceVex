@@ -42,15 +42,6 @@ def date_to_str(date):
     return f"{date.month}/{date.day}"
 
 
-def index_emoji(index):
-
-    if isinstance(index, int):
-        return f":{DISCORD_EMOJI_NAME[index]}:"
-
-    else:
-        return f":regional_indicator_{index}:"
-
-
 def load_words():
     with open("./goroku.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -63,17 +54,43 @@ def remove_mention(content):
     return " ".join(mention_removed)
 
 
-DISCORD_EMOJI_NAME = {
-    1: "one",
-    2: "two",
-    3: "three",
-    4: "four",
-    5: "five",
-    6: "six",
-    7: "seven",
-    8: "eight",
-    9: "nine",
-    10: "keycap_ten",
+UNICODE_EMOJI = {
+    1: "\N{DIGIT ONE}",
+    2: "\N{DIGIT TWO}",
+    3: "\N{DIGIT THREE}",
+    4: "\N{DIGIT FOUR}",
+    5: "\N{DIGIT FIVE}",
+    6: "\N{DIGIT SIX}",
+    7: "\N{DIGIT SEVEN}",
+    8: "\N{DIGIT EIGHT}",
+    9: "\N{DIGIT NINE}",
+    10: "\N{KEYCAP TEN}",
+    "a": "\N{REGIONAL INDICATOR SYMBOL LETTER A}",
+    "b": "\N{REGIONAL INDICATOR SYMBOL LETTER B}",
+    "c": "\N{REGIONAL INDICATOR SYMBOL LETTER C}",
+    "d": "\N{REGIONAL INDICATOR SYMBOL LETTER D}",
+    "e": "\N{REGIONAL INDICATOR SYMBOL LETTER E}",
+    "f": "\N{REGIONAL INDICATOR SYMBOL LETTER F}",
+    "g": "\N{REGIONAL INDICATOR SYMBOL LETTER G}",
+    "h": "\N{REGIONAL INDICATOR SYMBOL LETTER H}",
+    "i": "\N{REGIONAL INDICATOR SYMBOL LETTER I}",
+    "j": "\N{REGIONAL INDICATOR SYMBOL LETTER J}",
+    "k": "\N{REGIONAL INDICATOR SYMBOL LETTER K}",
+    "l": "\N{REGIONAL INDICATOR SYMBOL LETTER L}",
+    "n": "\N{REGIONAL INDICATOR SYMBOL LETTER N}",
+    "m": "\N{REGIONAL INDICATOR SYMBOL LETTER M}",
+    "o": "\N{REGIONAL INDICATOR SYMBOL LETTER O}",
+    "p": "\N{REGIONAL INDICATOR SYMBOL LETTER P}",
+    "q": "\N{REGIONAL INDICATOR SYMBOL LETTER Q}",
+    "r": "\N{REGIONAL INDICATOR SYMBOL LETTER R}",
+    "s": "\N{REGIONAL INDICATOR SYMBOL LETTER S}",
+    "t": "\N{REGIONAL INDICATOR SYMBOL LETTER T}",
+    "u": "\N{REGIONAL INDICATOR SYMBOL LETTER U}",
+    "v": "\N{REGIONAL INDICATOR SYMBOL LETTER V}",
+    "w": "\N{REGIONAL INDICATOR SYMBOL LETTER W}",
+    "x": "\N{REGIONAL INDICATOR SYMBOL LETTER X}",
+    "y": "\N{REGIONAL INDICATOR SYMBOL LETTER Y}",
+    "z": "\N{REGIONAL INDICATOR SYMBOL LETTER Z}",
 }
 
 
@@ -213,15 +230,16 @@ async def schedule(ctx, begin, end, description="日程調整"):
     last_message = ctx.channel.last_message
 
     for index in indexes:
-        await last_message.add_reaction(index_emoji(index))
+        await last_message.add_reaction(UNICODE_EMOJI[index])
 
 
 @client.command()
 async def indexEmoji(ctx):
 
-    await ctx.channel.send(index_emoji(1))
-    await ctx.channel.send(index_emoji("a"))
-    await ctx.channel.last_message.add_reaction(index_emoji(1))
+    await ctx.channel.send(UNICODE_EMOJI[1])
+    msg = await ctx.channel.send(UNICODE_EMOJI["a"])
+    await msg.add_reaction(UNICODE_EMOJI[1])
+    await msg.add_reaction(UNICODE_EMOJI["a"])
 
 times_loop.start()
 
