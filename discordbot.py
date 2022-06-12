@@ -15,44 +15,7 @@ voicevox_key = os.getenv("VOICEVOX_KEY")
 token = os.getenv("DISCORD_BOT_TOKEN")
 
 
-def find(arr, cond):
-    return next((el for el in arr if cond(el)), None)
-
-
-def index_list(length):
-
-    if length < 11:
-        return list(range(1, length + 1))
-
-    return string.ascii_lowercase[:length]
-
-
-def date_range(start, end):
-    for n in range((end - start).days + 1):
-        yield start + timedelta(n)
-
-
-def str_to_date(str):
-    year = datetime.now(ZoneInfo("Asia/Tokyo")).year
-    month, day = tuple(str.split("/"))
-    return date(year, int(month), int(day))
-
-
-def date_to_str(date):
-    return f"{date.month}/{date.day}"
-
-
-def load_words():
-    with open("./goroku.txt", "r", encoding="utf-8") as f:
-        lines = f.readlines()
-    return [line.strip() for line in lines]
-
-
-def remove_mention(content):
-    strs = content.split(" ")
-    mention_removed = strs[1:]
-    return " ".join(mention_removed)
-
+week_days = ["月", "火", "水", "木", "金", "土", "日"]
 
 UNICODE_EMOJI = {
     1: u"1️⃣",
@@ -94,6 +57,15 @@ UNICODE_EMOJI = {
 }
 
 
+def load_words():
+    with open("./goroku.txt", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    return [line.strip() for line in lines]
+
+
+words = load_words()
+
+
 class BotInfo:
 
     def text_channel(name):
@@ -105,7 +77,38 @@ class BotInfo:
     member = None
 
 
-words = load_words()
+def find(arr, cond):
+    return next((el for el in arr if cond(el)), None)
+
+
+def index_list(length):
+
+    if length < 11:
+        return list(range(1, length + 1))
+
+    return string.ascii_lowercase[:length]
+
+
+def date_range(start, end):
+    for n in range((end - start).days + 1):
+        yield start + timedelta(n)
+
+
+def str_to_date(str):
+    year = datetime.now(ZoneInfo("Asia/Tokyo")).year
+    month, day = tuple(str.split("/"))
+    return date(year, int(month), int(day))
+
+
+def date_to_str(date):
+    week_day = week_days[date.weekday()]
+    return f"{date.month}/{date.day} ({week_day})"
+
+
+def remove_mention(content):
+    strs = content.split(" ")
+    mention_removed = strs[1:]
+    return " ".join(mention_removed)
 
 
 async def member_voice_play(member, text, speaker=14, intonation=1, speed=0.9):
@@ -232,14 +235,6 @@ async def schedule(ctx, begin, end, description="日程調整"):
     for index in indexes:
         await last_message.add_reaction(UNICODE_EMOJI[index])
 
-
-@client.command()
-async def indexEmoji(ctx):
-
-    await ctx.channel.send(UNICODE_EMOJI[1])
-    msg = await ctx.channel.send(UNICODE_EMOJI["a"])
-    await msg.add_reaction(UNICODE_EMOJI[1])
-    await msg.add_reaction(UNICODE_EMOJI["a"])
 
 times_loop.start()
 
